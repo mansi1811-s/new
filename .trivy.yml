@@ -1,0 +1,4 @@
+# .trivy.yaml
+vulnerability:
+  skip:
+    - "LOW"
