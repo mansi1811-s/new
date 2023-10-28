@@ -23,4 +23,5 @@ RUN pip install flask
 
 EXPOSE 5000
 
+######
 CMD [ "python3", "./new.py" ]
