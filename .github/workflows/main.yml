@@ -37,5 +37,5 @@ jobs:
     - name: Scan Docker Image for Vulnerabilities with Trivy
       run: |
         trivy image  --severity=HIGH new:v1
-        continue-on-error: false
+      continue-on-error: false
 
