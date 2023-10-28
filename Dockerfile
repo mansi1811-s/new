@@ -15,12 +15,12 @@
 
 FROM python:3.9-slim
 
-WORKDIR /app
+WORKDIR /new
 
-COPY . /app
+COPY . /new
 
 RUN pip install flask 
 
 EXPOSE 5000
 
-CMD [ "python3", "./app.py" ]
+CMD [ "python3", "./new.py" ]
