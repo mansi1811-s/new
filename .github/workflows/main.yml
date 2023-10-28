@@ -40,3 +40,12 @@ jobs:
       # continue-on-error: false
       if: ${{ success() }}
 
+    - name: Check vulnerability
+      run: |
+        trivy_output=$(trivy image  --severity=HIGH new:v1)
+        if ${{ $trivy_output == 'Total: 0' }}
+          echo 'No vulnerability '
+        else
+          exit 1
+        fi
+
