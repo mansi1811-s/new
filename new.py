@@ -1,14 +1,20 @@
-import os
-from flask import Flask
-app = Flask(__name__)
+import sqlite3
 
-@app.route("/")
-def main():
-    return "Welcome!"
+def get_user_data(username):
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
 
-@app.route('/how are you')
-def hello():
-    return 'I am good, how about you?'
+    #Correct code without vulnerability
+    # query = "SELECT * FROM users WHERE username = ?"
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+    #Directly concatenating user input into SQL query -CVE-2018-6829
+    query = "SELECT * FROM users WHERE username = '" + username + "'"
+    cursor.execute(query)
+
+    user_data = cursor.fetchall()
+    conn.close()
+    return user_data
+
+username = input("Enter a username: ")
+user_data = get_user_data(username)
+print(user_data)
