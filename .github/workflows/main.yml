@@ -7,6 +7,7 @@ on:
 
 jobs:
   build:
+    name: pre-merge-check
     runs-on: ubuntu-latest
     strategy:
   #    fail-fast: true
@@ -26,7 +27,7 @@ jobs:
 
     - name: Build Docker Image
       run: docker build -t new:v1 .
-      continue-on-error: true
+      # continue-on-error: true
 
     - name: Set up Trivy
       run: |
@@ -35,6 +36,25 @@ jobs:
 
     - name: Scan Docker Image for Vulnerabilities with Trivy
       run: |
-        trivy --config .trivy.yml --exit-code 1 --severity HIGH,CRITICAL new:v1
-      continue-on-error: true
+        trivy image  --severity=HIGH new:v1
+      # continue-on-error: false
+      if: ${{ success() }}
+
+    # - name: Check vulnerability
+    #   run: |
+    #     trivy_output=$(trivy image  --severity=HIGH new:v1)
+    #     if ${{ $trivy_output == 'Total: 0' }}
+    #       echo 'No vulnerability '
+    #     else
+    #       exit 1
+    #     fi
+    - name: Check vulnerability
+      run: |
+        trivy_output=$(trivy image --severity HIGH new:v1)
+        if echo "$trivy_output" | grep -q 'Total: 0'; then
+          echo 'No vulnerability found'
+        else
+          echo 'Vulnerability found'
+          exit 1
+        fi
 
