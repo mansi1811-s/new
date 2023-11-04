@@ -72,7 +72,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: trivy-results
-        sarif_file: trivy-results.sarif
+        path: trivy-results.sarif
 
     - name: Check for Vulnerabilities
       run: |
