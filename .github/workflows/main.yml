@@ -60,12 +60,13 @@ jobs:
     #     fi
     - name: Scan Docker Image with Trivy
       run: |
-        trivy image --severity=HIGH --format=sarif -o trivy-results.sarif new:v1
+        trivy image --severity=HIGH -f sarif new:v1 > trivy-results.sarif
       shell: bash
 
     - name: Upload SARIF Report
-      uses: github/codeql-action/upload-sarif@v2
+      uses: actions/upload-artifact@v2
       with:
+        name: trivy-results
         sarif_file: trivy-results.sarif
 
     - name: Check for Vulnerabilities
