@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -34,27 +35,47 @@ jobs:
         curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/master/contrib/install.sh | sh -s -- -b /usr/local/bin
         trivy -v
 
-    - name: Scan Docker Image for Vulnerabilities with Trivy
-      run: |
-        trivy image  --severity=HIGH new:v1
-      # continue-on-error: false
-      if: ${{ success() }}
+    # - name: Scan Docker Image for Vulnerabilities with Trivy
+    #   run: |
+    #     trivy image  --severity=HIGH new:v1
+    #   # continue-on-error: false
+    #   if: ${{ success() }}
 
+    # # - name: Check vulnerability
+    # #   run: |
+    # #     trivy_output=$(trivy image  --severity=HIGH new:v1)
+    # #     if ${{ $trivy_output == 'Total: 0' }}
+    # #       echo 'No vulnerability '
+    # #     else
+    # #       exit 1
+    # #     fi
     # - name: Check vulnerability
     #   run: |
-    #     trivy_output=$(trivy image  --severity=HIGH new:v1)
-    #     if ${{ $trivy_output == 'Total: 0' }}
-    #       echo 'No vulnerability '
+    #     trivy_output=$(trivy image --severity HIGH new:v1)
+    #     if echo "$trivy_output" | grep -q 'Total: 0'; then
+    #       echo 'No vulnerability found'
     #     else
+    #       echo 'Vulnerability found'
     #       exit 1
     #     fi
-    - name: Check vulnerability
+    - name: Scan Docker Image with Trivy
       run: |
-        trivy_output=$(trivy image --severity HIGH new:v1)
-        if echo "$trivy_output" | grep -q 'Total: 0'; then
-          echo 'No vulnerability found'
+        trivy image --severity=HIGH --format=sarif -o trivy-results.sarif new:v1
+      shell: bash
+
+    - name: Upload SARIF Report
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: trivy-results.sarif
+
+    - name: Check for Vulnerabilities
+      run: |
+        # Use jq to count the number of findings in the SARIF report
+        count=$(jq '.runs[0].results | length' trivy-results.sarif)
+        if [ "$count" -eq "0" ]; then
+          echo "No vulnerabilities found."
         else
-          echo 'Vulnerability found'
+          echo "$count vulnerabilities found. Failing the build."
           exit 1
         fi
-
+      shell: bash
