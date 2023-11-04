@@ -60,6 +60,11 @@ jobs:
     #     fi
     - name: Scan Docker Image with Trivy
       run: |
+        trivy image  --severity=HIGH new:v1
+      #  --exit-code 1
+      shell: bash
+    - name: Convert Trivy Results to SARIF
+      run: |
         trivy image --severity=HIGH -f sarif new:v1 > trivy-results.sarif
       shell: bash
 
