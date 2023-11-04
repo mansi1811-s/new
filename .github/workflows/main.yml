@@ -80,8 +80,14 @@ jobs:
         count=$(jq '.runs[0].results | length' trivy-results.sarif)
         if [ "$count" -eq "0" ]; then
           echo "No vulnerabilities found."
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker image tag new:v1 mansi1811/new:v1 
+          docker push mansi1811/new:v1
         else
           echo "$count vulnerabilities found. Failing the build."
           exit 1
         fi
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       shell: bash
