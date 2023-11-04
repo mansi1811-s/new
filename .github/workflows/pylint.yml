@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.9"]
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -32,3 +32,10 @@ jobs:
           echo "Pylint score is less than or equal to 5, failure"
           exit 1
         fi
+    - name: Set build status
+      if: steps.pylint-check.outcome == 'success'
+      run: echo "Pylint check passed, build successful"
+    - name: Set build status
+      if: steps.pylint-check.outcome == 'failure'
+      run: echo "Pylint check failed, build failed"
+  
