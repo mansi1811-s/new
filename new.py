@@ -1,6 +1,12 @@
 import sqlite3
+"""
+gyji
+"""
 
 def get_user_data(username):
+    """
+    gyji
+    """
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
@@ -15,7 +21,6 @@ def get_user_data(username):
     conn.close()
     return user_data
 
-username = input("Enter a username: ")
-user_data = get_user_data(username)
+username = input("Enter a username: ") # pylint: disable=redefined-outer-name
+user_data = get_user_data(username) # pylint: disable=redefined-outer-name
 print(user_data)
-# 
