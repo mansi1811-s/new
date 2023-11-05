@@ -35,7 +35,7 @@ jobs:
     - name: Set build status
       if: steps.pylint-check.outcome == 'success'
       run: echo "Pylint check passed, build successful"
-    - name: Set build status
-      if: steps.pylint-check.outcome == 'failure'
-      run: echo "Pylint check failed, build failed"
+    # - name: Set build status
+    #   if: steps.pylint-check.outcome == 'failure'
+    #   run: echo "Pylint check failed, build failed"
   
