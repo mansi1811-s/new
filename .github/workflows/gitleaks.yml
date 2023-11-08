@@ -2,10 +2,10 @@ name: gitleaks
 on:
   push:
     branches:
-      - mansi1811-s-patch-2
+      - gitleaksBranch
   pull_request:
     branches:
-      - mansi1811-s-patch-2
+      - gitleaksBranch
 jobs:
   scan:
     name: gitleaks
