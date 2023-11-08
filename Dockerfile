@@ -1,27 +1,33 @@
+# alpine image has zero vulnerabilities
+FROM python:3.9-alpine
+
+# FROM python:3.9-slim  
+
+WORKDIR /app
+
+COPY . /app
+
+# Set environment variables for AWS credentials
+# ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY}
+# ENV AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+
+RUN pip install flask && pip install --upgrade setuptools
+
+RUN pip install Werkzeug==3.0.1
+
+RUN pip install boto3 && pip install botocore 
+
+CMD [ "python3", "./new.py" ]
+
 # FROM python:3.9-slim
 
-# #WORKDIR /app
+# WORKDIR /new
 
-# COPY version.txt version.txt
-# RUN pip3 install -r version.txt
+# COPY . /new
 
-# COPY . app.py
+# RUN pip install flask 
 
 # EXPOSE 5000
 
-# RUN FLASK_APP=app.py
-
-# CMD [ "flask", "run", "--host=0.0.0.0"]
-
-FROM python:3.9-slim
-
-WORKDIR /new
-
-COPY . /new
-
-RUN pip install flask 
-
-EXPOSE 5000
-
-######
-CMD [ "python3", "./new.py" ]
+# ######
+# CMD [ "python3", "./new.py" ]
