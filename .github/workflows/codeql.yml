@@ -47,7 +47,7 @@ jobs:
       uses: github/codeql-action/analyze@v2
       
     - name: Upload CodeQL results
-      uses: github/codeql-action/upload-sarif@v1
+      uses: github/codeql-action/upload-sarif@v2
       with:
         sarif_file: results/codeql-results.sarif
 # For most projects, this workflow file will not need changing; you simply need
