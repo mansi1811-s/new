@@ -1,0 +1,46 @@
+name: Pylint
+
+on:
+  push:
+    branches:
+      - featureBranch
+  pull_request:
+    branches:
+      - featureBranch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9"]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pylint
+    - name: Analysing the code with pylint
+      run: |
+        pylint $(git ls-files '*.py')
+    # - name: Check pylint score
+    #   id: pylint-check
+    #   run: |
+    #     pylint_score=$(pylint $(git ls-files '*.py') | grep 'Your code has been rated at' | sed -E 's/.* ([0-9.]+)/\1/')
+    #     if (( $(echo "$pylint_score > 5" | bc -l) )); then
+    #       echo "Pylint score is greater than 5, success"
+    #       exit 0
+    #     else
+    #       echo "Pylint score is less than or equal to 5, failure"
+    #       exit 1
+    #     fi
+    # - name: Set build status
+    #   if: steps.pylint-check.outcome == 'success'
+    #   run: echo "Pylint check passed, build successful"
+    # - name: Set build status
+    #   if: steps.pylint-check.outcome == 'failure'
+    #   run: echo "Pylint check failed, build failed"
+  
