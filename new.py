@@ -80,7 +80,7 @@ def create_folder():
     except ClientError as error:
         message = error.response["Error"]['Code']
         return render_template('status.html', message=message)
-
+# 
 @app.route('/delete_bucket', methods=['POST'])
 def delete_bucket():
     """
