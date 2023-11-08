@@ -1,12 +1,16 @@
 """ Python flask app for s3 Management """
+import os
 from flask import Flask, render_template, request  #pylint: disable=import-error
 import boto3 #pylint: disable=import-error
 import botocore #pylint: disable=import-error
 from botocore.exceptions import ClientError #pylint: disable=import-error
 
-client = boto3.client('s3')
 
+AWS_ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 
+client = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY,
+                      aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
 app = Flask(__name__)
 
 @app.route("/")
