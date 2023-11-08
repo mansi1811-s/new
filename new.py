@@ -4,10 +4,9 @@ import boto3
 import botocore
 from botocore.exceptions import ClientError
 
-aws_access_key_id = 'AKIAVXCCZCFDN6J7MKVQ'
-aws_secret_access_key = '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'
 
-client = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
+
+client = boto3.client('s3')
 
 
 app = Flask(__name__)
