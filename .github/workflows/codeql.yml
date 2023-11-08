@@ -7,10 +7,10 @@ on:
   #   branches: [ "featureBranch" ]
   push:
     branches:
-      - 'featureBranch' # Trigger on any branch starting with 'feature/'
+      - featureBranch # Trigger on any branch starting with 'feature/'
   pull_request:
     branches:
-      - 'featureBranch'
+      - featureBranch
  
   schedule:
     - cron: '30 18 * * 2'
