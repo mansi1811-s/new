@@ -12,8 +12,8 @@ on:
     branches:
       - featureBranch
  
-  schedule:
-    - cron: '30 18 * * 2'
+  # schedule:
+  #   - cron: '30 18 * * 2'
   workflow_dispatch:
 
 jobs:
@@ -45,6 +45,11 @@ jobs:
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
+
+    - name: Upload CodeQL results
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: results/codeql-results.sarif
       
     # - name: Upload CodeQL results
     #   uses: github/codeql-action/upload-sarif@v2
