@@ -1,10 +1,16 @@
 name: "CodeQL"
 
 on:
+  # push:
+  #   branches: [ "featureBranch" ]
+  # pull_request:
+  #   branches: [ "featureBranch" ]
   push:
-    branches: [ "featureBranch" ]
+    branches:
+      - 'featureBranch' # Trigger on any branch starting with 'feature/'
   pull_request:
-    branches: [ "featureBranch" ]
+    branches:
+      - 'featureBranch'
  
   schedule:
     - cron: '30 18 * * 2'
