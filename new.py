@@ -1,5 +1,5 @@
 """ Python flask app for s3 Management """
-from flask import Flask, render_template, request 
+from flask import Flask, render_template, request  #pylint: disable=import-error
 import boto3 #pylint: disable=import-error
 import botocore #pylint: disable=import-error
 from botocore.exceptions import ClientError #pylint: disable=import-error
