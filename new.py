@@ -88,7 +88,7 @@ def delete_bucket():
     """
     del_buck = request.form['del_buck']# Retrieve the value of del_buck from the HTML form
     try:
-        s3 = boto3.resource("s3") # pylint: disable=invalid-name
+        s3 = boto3.resource("s3", aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key) # pylint: disable=invalid-name
         bucket = s3.Bucket(del_buck)
         bucket.objects.all().delete()
         bucket.delete()
