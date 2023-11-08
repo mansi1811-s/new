@@ -3,10 +3,10 @@ name: Pylint
 on:
   push:
     branches:
-      - featureBranch
+      - mansi1811-s-patch-1
   pull_request:
     branches:
-      - featureBranch
+      - mansi1811-s-patch-1
 jobs:
   build:
     runs-on: ubuntu-latest
