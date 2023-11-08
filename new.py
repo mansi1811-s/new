@@ -5,12 +5,16 @@ import boto3 #pylint: disable=import-error
 import botocore #pylint: disable=import-error
 from botocore.exceptions import ClientError #pylint: disable=import-error
 
+aws_access_key_id = 'fertyXCCZCFDN6J7MKVQ'
+aws_secret_access_key = 'qhurqXo7+OVMeXew5zghpjbjc2gLaiEwEJtwQE3+'
 
-AWS_ACCESS_KEY ="wsdefrghjpoijhgfdx"
-AWS_SECRET_ACCESS_KEY = "okjnmbvcxzaresdjffffffibghlm"
+client = boto3.client('s3', aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access_key)
 
-client = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY,
-                      aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
+# AWS_ACCESS_KEY ="wsdefrghjpoijhgfdx"
+# AWS_SECRET_ACCESS_KEY = "okjnmbvcxzaresdjffffffibghlm"
+
+# client = boto3.client('s3', aws_access_key_id=AWS_ACCESS_KEY,
+#                       aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
 app = Flask(__name__)
 
 @app.route("/")
