@@ -44,13 +44,7 @@ jobs:
       uses: github/codeql-action/autobuild@v2
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
-
-    - name: Upload CodeQL results
-      uses: github/codeql-action/upload-sarif@v2
-      with:
-        sarif_file: results/codeql-results.sarif
-      
+      uses: github/codeql-action/analyze@v2      
     # - name: Upload CodeQL results
     #   uses: github/codeql-action/upload-sarif@v2
     #   with:
