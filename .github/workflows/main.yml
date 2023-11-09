@@ -1,23 +1,20 @@
-name: Pre-Merge Checks
+name: trivy-check
 
 on:
   pull_request:
     branches:
-      - main
-  workflow_run:
-    workflows: ["Pylint", "gitleaks", "codeql"]
-    types:
-      - completed
+      - trivyBranch
+  # workflow_run:
+  #   workflows: ["Pylint", "gitleaks", "codeql"]
+  #   types:
+  #     - completed
+  workflow_dispatch:
 
 jobs:
   build:
-    name: pre-merge-check
+    name: trivy-check
+    # name: pre-merge-check(trivyBranch)
     runs-on: ubuntu-latest
-    env:
-        AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: "ap-south-1"
-
     strategy:
   #    fail-fast: true
       matrix:
@@ -30,18 +27,18 @@ jobs:
     - name: Set up Docker
       uses: docker/setup-buildx-action@v3
 
+    # - name: Set up AWS credentials
+    #   env:
+    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #   run: |
+    #     echo $AWS_ACCESS_KEY_ID > .env
+    #     echo $AWS_SECRET_ACCESS_KEY >> .env
+
     - name: Build Docker Image
       run: |
         docker build -t new:v1 .
         docker image tag new:v1 mansi1811/new:v1
-      env:
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: "ap-south-1"
-
-    # - name: Build Docker Image
-    #   run: docker build -t new:v1 .
-    #   # continue-on-error: true
 
     - name: Set up Trivy
       run: |
@@ -50,27 +47,20 @@ jobs:
 
     - name: Scan Docker Image for Vulnerabilities with Trivy
       run: |
-        trivy image  --severity=HIGH new:v1
-      # continue-on-error: false
-      if: ${{ success() }}
-
-    # - name: Check vulnerability
-    #   run: |
-    #     trivy_output=$(trivy image  --severity=HIGH new:v1)
-    #     if ${{ $trivy_output == 'Total: 0' }}
-    #       echo 'No vulnerability '
-    #     else
-    #       exit 1
-    #     fi
-    - name: Check vulnerability
+        trivy image --severity=HIGH,CRITICAL --exit-code 1 new:v1
+          
+    - name: Convert Trivy Results to SARIF
       run: |
-        trivy_output=$(trivy image --severity HIGH new:v1)
-        if echo "$trivy_output" | grep -q 'Total: 0'; then
-          echo 'No vulnerability found'
-        else
-          echo 'Vulnerability found'
-          exit 1
-        fi
+        trivy image --severity=HIGH,CRITICAL -f sarif new:v1 > trivy-results.sarif
+      shell: bash
+      if: always()
+
+    - name: Upload SARIF Report
+      uses: actions/upload-artifact@v2
+      with:
+        name: trivy-results
+        path: trivy-results.sarif
+      if: always()
         
     - name: Push Docker Image
       run: |
@@ -80,4 +70,68 @@ jobs:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       shell: bash
+
+# jobs:
+#   build:
+#     name: pre-merge-check
+#     runs-on: ubuntu-latest
+
+#     strategy:
+#   #    fail-fast: true
+#       matrix:
+#         language: ['python']
+
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v2
+
+#     - name: Set up Docker
+#       uses: docker/setup-buildx-action@v3
+
+#     - name: Build Docker Image
+#       run: |
+#         docker build -t new:v1 .
+#         docker image tag new:v1 mansi1811/new:v1
+
+#     # - name: Build Docker Image
+#     #   run: docker build -t new:v1 .
+#     #   # continue-on-error: true
+
+#     - name: Set up Trivy
+#       run: |
+#         curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/master/contrib/install.sh | sh -s -- -b /usr/local/bin
+#         trivy -v
+
+#     - name: Scan Docker Image for Vulnerabilities with Trivy
+#       run: |
+#         trivy image  --severity=HIGH new:v1
+#       # continue-on-error: false
+#       if: always()
+
+#     # - name: Check vulnerability
+#     #   run: |
+#     #     trivy_output=$(trivy image  --severity=HIGH new:v1)
+#     #     if ${{ $trivy_output == 'Total: 0' }}
+#     #       echo 'No vulnerability '
+#     #     else
+#     #       exit 1
+#     #     fi
+#     - name: Check vulnerability
+#       run: |
+#         trivy_output=$(trivy image --severity HIGH new:v1)
+#         if echo "$trivy_output" | grep -q 'Total: 0'; then
+#           echo 'No vulnerability found'
+#         else
+#           echo 'Vulnerability found'
+#           exit 1
+#         fi
+        
+#     - name: Push Docker Image
+#       run: |
+#         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+#         docker push mansi1811/new:v1
+      # env:
+      #   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      #   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      # shell: bash
 
