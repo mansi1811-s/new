@@ -1,9 +1,17 @@
 name: trivy-check
 
 on:
+  push:
+    branches:
+      - trivyBranch
   pull_request:
     branches:
       - trivyBranch
+
+# on:
+#   pull_request:
+#     branches:
+#       - trivyBranch
   # workflow_run:
   #   workflows: ["Pylint", "gitleaks", "codeql"]
   #   types:
