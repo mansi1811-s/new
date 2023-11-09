@@ -45,8 +45,8 @@ jobs:
 
     - name: Build Docker Image
       run: |
-        docker build -t new:v1 .
-        docker image tag new:v1 mansi1811/new:v1
+        docker build -t newf:v1 .
+        docker image tag newf:v1 mansi1811/newf:v1
 
     - name: Set up Trivy
       run: |
@@ -55,11 +55,11 @@ jobs:
 
     - name: Scan Docker Image for Vulnerabilities with Trivy
       run: |
-        trivy image --severity=HIGH,CRITICAL --exit-code 1 new:v1
+        trivy image --severity=HIGH,CRITICAL --exit-code 1 newf:v1
           
     - name: Convert Trivy Results to SARIF
       run: |
-        trivy image --severity=HIGH,CRITICAL -f sarif new:v1 > trivy-results.sarif
+        trivy image --severity=HIGH,CRITICAL -f sarif newf:v1 > trivy-results.sarif
       shell: bash
       if: always()
 
@@ -73,7 +73,7 @@ jobs:
     - name: Push Docker Image
       run: |
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        docker push mansi1811/new:v1
+        docker push mansi1811/newf:v1
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
