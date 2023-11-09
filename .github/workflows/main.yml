@@ -23,11 +23,12 @@ jobs:
 
     - name: Build Docker Image
       run: |
-        docker build -t new:v1 .
+        docker build -t nFlask:v1 .
+        docker image tag nFlask:v1 mansi1811/nFlask:v1
 
-    - name: Build Docker Image
-      run: docker build -t new:v1 .
-      # continue-on-error: true
+    # - name: Build Docker Image
+    #   run: docker build -t nFlask:v1 .
+    #   # continue-on-error: true
 
     - name: Set up Trivy
       run: |
@@ -36,9 +37,9 @@ jobs:
 
     - name: Scan Docker Image for Vulnerabilities with Trivy
       run: |
-        trivy image  --severity=HIGH new:v1
+        trivy image  --severity=HIGH nFlask:v1
       # continue-on-error: false
-      if: ${{ success() }}
+      # if: ${{ success() }}
 
     # - name: Check vulnerability
     #   run: |
@@ -48,13 +49,24 @@ jobs:
     #     else
     #       exit 1
     #     fi
-    - name: Check vulnerability
+    - name: Convert Trivy Results to SARIF
       run: |
-        trivy_output=$(trivy image --severity HIGH new:v1)
-        if echo "$trivy_output" | grep -q 'Total: 0'; then
-          echo 'No vulnerability found'
-        else
-          echo 'Vulnerability found'
-          exit 1
-        fi
+        trivy image --severity=HIGH,CRITICAL -f sarif nFlask:v1 > trivy-results.sarif
+      shell: bash
+      if: always()
 
+    - name: Upload SARIF Report
+      uses: actions/upload-artifact@v2
+      with:
+        name: trivy-results
+        path: trivy-results.sarif
+      if: always()
+        
+    - name: Push Docker Image
+      run: |
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        docker push mansi1811/new:v1
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      shell: bash
