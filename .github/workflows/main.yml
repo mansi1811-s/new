@@ -26,8 +26,8 @@ jobs:
 
     - name: Build Docker Image
       run: |
-        docker build -t nFlask:v1 .
-        docker image tag nFlask:v1 mansi1811/nFlask:v1
+        docker build -t nflask:v1 .
+        docker image tag nflask:v1 mansi1811/nflask:v1
 
     # - name: Build Docker Image
     #   run: docker build -t nFlask:v1 .
@@ -40,7 +40,7 @@ jobs:
 
     - name: Scan Docker Image for Vulnerabilities with Trivy
       run: |
-        trivy image  --severity=HIGH nFlask:v1
+        trivy image  --severity=HIGH nflask:v1
       # continue-on-error: false
       # if: ${{ success() }}
 
@@ -54,7 +54,7 @@ jobs:
     #     fi
     - name: Convert Trivy Results to SARIF
       run: |
-        trivy image --severity=HIGH,CRITICAL -f sarif nFlask:v1 > trivy-results.sarif
+        trivy image --severity=HIGH,CRITICAL -f sarif nflask:v1 > trivy-results.sarif
       shell: bash
       if: always()
 
