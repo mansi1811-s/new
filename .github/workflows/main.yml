@@ -3,7 +3,10 @@ name: Pre-Merge Checks
 on:
   pull_request:
     branches:
-      - main
+      - featureBranch
+  push:
+    branches:
+      - featureBranch
 
 jobs:
   build:
